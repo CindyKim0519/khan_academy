@@ -9,7 +9,7 @@
 </head>
 <body>
     <header class="header d-flex align-items-center justify-content-between px-3 py-2 border-bottom bg-white">
-        <img src="" alt="">
+        <img src="/images/khan_academy_logo.jpg" alt="" style="width:150px;">
         <div class="d-flex align-items-center">
             <span>관리자</span>
             <span class="text-secondary me-3">님 환영합니다</span>
@@ -357,564 +357,507 @@
     <script src="./vendors/fontawesome/all.min.js"></script>
     <script src="./vendors/echarts/echarts.min.js"></script>
     <script>
-      // 11개 카테고리 마스터리 달성률 도넛 차트
-const masteryChart = echarts.init(document.getElementById('mastery-chart'));
+             // 모든 차트 인스턴스를 저장할 배열
+        const chartInstances = [];
 
-const masteryOption = {
-    tooltip: {
-        trigger: 'item',
-        formatter: function(params) {
-            const totalLearners = 120; // 1억 2천만 명
-            const learnerCount = (params.value / 100 * totalLearners).toFixed(1);
-            return `
-                <div style="font-size: 14px; line-height: 1.8; padding: 10px;">
-                    <strong style="color: ${params.color};">${params.name}</strong><br/>
-                    마스터리 달성률: <strong>${params.value}%</strong><br/>
-                    예상 학습자 수: <strong>${learnerCount}백만 명</strong>
-                </div>
-            `;
-        }
-    },
-    legend: {
-        orient: 'vertical',
-        left: '0%',
-        top: 'center',
-        textStyle: { 
-            fontSize: 11,
-            color: '#333'
-        },
-        itemGap: 8,
-        itemWidth: 14,
-        itemHeight: 14,
-        formatter: function(name) {
-            return name.length > 20 ? name.substring(0, 20) + '...' : name;
-        }
-    },
-    series: [
-        {
-            name: '카테고리별 숙련도',
-            type: 'pie',
-            radius: ['35%', '60%'],
-            center: ['70%', '50%'],
-            avoidLabelOverlap: false,
-            label: {
-                show: false,
-                position: 'outside',
-                formatter: function(params) {
-                    return `${params.value}%`;
-                },
-                fontSize: 10,
-                color: '#333'
-            },
-            emphasis: {
-                label: {
-                    show: true,
-                    fontSize: '12',
-                    fontWeight: 'bold'
-                },
-                itemStyle: {
-                    shadowBlur: 10,
-                    shadowOffsetX: 0,
-                    shadowColor: 'rgba(0, 0, 0, 0.5)'
-                }
-            },
-            labelLine: {
-                show: true,
-                length: 8,
-                length2: 5
-            },
-            data: [
-                {
-                    value: 16, 
-                    name: '수학: 유치원 - 8학년', 
-                    itemStyle: {color: '#055D3C'}
-                },
-                {
-                    value: 14, 
-                    name: '수학: 고등학교 및 대학교', 
-                    itemStyle: {color: '#067A49'}
-                },
-                {
-                    value: 13, 
-                    name: '과학', 
-                    itemStyle: {color: '#0B9660'}
-                },
-                {
-                    value: 12, 
-                    name: '수학: 준비 과정', 
-                    itemStyle: {color: '#0CA65B'}
-                },
-                {
-                    value: 8, 
-                    name: '컴퓨팅', 
-                    itemStyle: {color: '#08A157'}
-                },
-                {
-                    value: 7, 
-                    name: '읽기 및 언어 예술', 
-                    itemStyle: {color: '#14BF96'}
-                },
-                {
-                    value: 6, 
-                    name: '시험 준비', 
-                    itemStyle: {color: '#10D07A'}
-                },
-                {
-                    value: 5, 
-                    name: '경제학', 
-                    itemStyle: {color: '#1AE094'}
-                },
-                {
-                    value: 4, 
-                    name: '사회 과학', 
-                    itemStyle: {color: '#24F0AC'}
-                },
-                {
-                    value: 4, 
-                    name: '협력 과정', 
-                    itemStyle: {color: '#20E8A0'}
-                },
-                {
-                    value: 3, 
-                    name: '생활 기술', 
-                    itemStyle: {color: '#16E086'}
-                }
-            ]
-        }
-    ],
-};
+        // 차트 초기화 함수
+        function initCharts() {
+            // 11개 카테고리 마스터리 달성률 도넛 차트
+            const masteryChart = echarts.init(document.getElementById('mastery-chart'));
+            chartInstances.push(masteryChart);
 
-masteryChart.setOption(masteryOption);
-
-// 과목별 학생수 막대 그래프
-const subjectChart = echarts.init(document.getElementById('subject-students-chart'));
-const subjectOption = {
-    tooltip: {
-        trigger: 'axis',
-        axisPointer: {
-            type: 'shadow'
-        },
-        formatter: function(params) {
-            const param = params[0];
-            return `
-                <div style="font-size: 14px; line-height: 1.8; padding: 10px;">
-                    <strong style="color: ${param.color};">${param.name}</strong><br/>
-                    등록 학생 수: <strong>${param.value.toLocaleString()}명</strong><br/>
-                    전체 대비 비율: <strong>${((param.value / 29360) * 100).toFixed(1)}%</strong>
-                </div>
-            `;
-        }
-    },
-    grid: {
-        left: '0%',
-        right: '5%',
-        top: '0%',
-        bottom: '0%',
-        containLabel: true
-    },
-    xAxis: {
-        type: 'value',
-        axisLabel: {
-            fontSize: 12
-        }
-    },
-    yAxis: {
-        type: 'category',
-        data: [
-            '파트너 과정',
-            '사회',
-            '생활기능',
-            '국어',
-            '컴퓨터과학',
-            '과학',
-            '경제',
-            '시험준비',
-            '수학: 고등학교 및 대학교',
-            '수학: 준비 과정',
-            '수학: 유치원-8학년'
-        ],
-        axisLabel: { 
-            fontSize: 11,
-            interval: 0
-        }
-    },
-    series: [
-        {
-            name: '학생수',
-            type: 'bar',
-            data: [850, 1240, 1580, 2150, 2680, 3420, 1890, 2970, 4100, 3650, 4850],
-            itemStyle: {
-                color: '#14BF96'
-            }
-        }
-    ]
-};
-subjectChart.setOption(subjectOption);
-
-// 사용자 증가 추이
-const userTrendChart = echarts.init(document.getElementById('user-trend-chart'));
-const dates = [];
-const newUsers = [];
-const activeUsers = [];
-
-for (let i = 29; i >= 0; i--) {
-    const date = new Date();
-    date.setDate(date.getDate() - i);
-    dates.push(date.toLocaleDateString('ko-KR', {month: 'short', day: 'numeric'}));
-    newUsers.push(Math.floor(Math.random() * 500) + 800);
-    activeUsers.push(Math.floor(Math.random() * 2000) + 15000);
-}
-
-const userTrendOption = {
-    tooltip: {
-        trigger: 'axis',
-        formatter: function(params) {
-            let result = `<div style="font-size: 14px; line-height: 1.8; padding: 10px;">`;
-            result += `<strong>${params[0].axisValue}</strong><br/>`;
-            params.forEach(param => {
-                result += `<span style="color: ${param.color};">● ${param.seriesName}: <strong>${param.value.toLocaleString()}명</strong></span><br/>`;
-            });
-            result += `</div>`;
-            return result;
-        }
-    },
-    legend: {
-        data: ['신규 가입자', '활성 사용자']
-    },
-    grid: {
-        left: '0%',
-        right: '1%',
-        bottom: '0%',
-        top: '15%',
-        containLabel: true
-    },
-    xAxis: {
-        type: 'category',
-        boundaryGap: false,
-        data: dates
-    },
-    yAxis: {
-        type: 'value',
-    },
-    series: [
-        {
-            name: '신규 가입자',
-            type: 'line',
-            data: newUsers,
-            itemStyle: { color: '#14BF96' }
-        },
-        {
-            name: '활성 사용자',
-            type: 'line',
-            data: activeUsers,
-            itemStyle: { color: '#10D07A' }
-        }
-    ]
-};
-userTrendChart.setOption(userTrendOption);
-
-// 댓글 활동 시간대별
-const commentsChart = echarts.init(document.getElementById('comments-chart'));
-const commentsOption = {
-    tooltip: {
-        trigger: 'axis',
-        formatter: function(params) {
-            const param = params[0];
-            const timeRange = param.name;
-            const totalComments = [45, 23, 12, 67, 234, 456, 678, 543, 432, 567, 345, 123].reduce((a, b) => a + b, 0);
-            const percentage = ((param.value / totalComments) * 100).toFixed(1);
-            return `
-                <div style="font-size: 14px; line-height: 1.8; padding: 10px;">
-                    <strong style="color: ${param.color};">시간대: ${timeRange}</strong><br/>
-                    댓글 수: <strong>${param.value}개</strong><br/>
-                </div>
-            `;
-        }
-    },
-    grid: {
-        left: '0%',
-        right: '0%',
-        bottom: '0%',
-        top: '5%',
-        containLabel: true
-    },
-    xAxis: {
-        type: 'category',
-        data: ['00-02', '02-04', '04-06', '06-08', '08-10', '10-12', '12-14', '14-16', '16-18', '18-20', '20-22', '22-00']
-    },
-    yAxis: {
-        type: 'value'
-    },
-    series: [
-        {
-            name: '댓글 수',
-            type: 'bar',
-            data: [45, 23, 12, 67, 234, 456, 678, 543, 432, 567, 345, 123],
-            itemStyle: {
-                color: '#14BF96'
-            }
-        }
-    ]
-};
-commentsChart.setOption(commentsOption);
-
-// 기부 현황 파이 차트
-const donationChart = echarts.init(document.getElementById('donation-chart'));
-const donationOption = {
-    tooltip: {
-        trigger: 'item',
-        formatter: function(params) {
-            const totalDonation = 28500 + 12800 + 6532;
-            const percentage = ((params.value / totalDonation) * 100).toFixed(1);
-            return `
-                <div style="font-size: 14px; line-height: 1.8; padding: 10px;">
-                    <strong style="color: ${params.color};">${params.name}</strong><br/>
-                    기부 금액: <strong>$${params.value.toLocaleString()}</strong><br/>
-                    전체 비율: <strong>${percentage}%</strong><br/>
-                </div>
-            `;
-        }
-    },
-    legend: {
-        orient: 'vertical',
-        left: 'left',
-        textStyle: { fontSize: 10 }
-    },
-    series: [
-        {
-            name: '기부 유형',
-            type: 'pie',
-            radius: '60%',
-            data: [
-                {value: 28500, name: '개인 기부자', itemStyle: {color: '#0CA65B'}},
-                {value: 12800, name: '기업 후원', itemStyle: {color: '#14BF96'}},
-                {value: 6532, name: '정기 기부', itemStyle: {color: '#10D07A'}}
-            ],
-            emphasis: {
-                itemStyle: {
-                    shadowBlur: 10,
-                    shadowOffsetX: 0,
-                    shadowColor: 'rgba(0, 0, 0, 0.5)'
-                }
-            },
-            label: {
-                show: false
-            }
-        }
-    ]
-};
-donationChart.setOption(donationOption);
-
-// 학습 시간 추이
-const studyTimeChart = echarts.init(document.getElementById('study-time-chart'));
-const studyTimeOption = {
-    tooltip: {
-        trigger: 'axis',
-        formatter: function(params) {
-            const param = params[0];
-            const hours = Math.floor(param.value / 60);
-            const minutes = param.value % 60;
-            const timeString = hours > 0 ? `${hours}시간 ${minutes}분` : `${minutes}분`;
-            return `
-                <div style="font-size: 14px; line-height: 1.8; padding: 10px;">
-                    <strong style="color: ${param.color};">${param.name}</strong><br/>
-                    평균 학습시간: <strong>${timeString}</strong><br/>
-                </div>
-            `;
-        }
-    },
-    grid: {
-        left: '0%',
-        right: '0%',
-        bottom: '0%',
-        top: '5%',
-        containLabel: true
-    },
-    xAxis: {
-        type: 'category',
-        data: ['1주전', '6일전', '5일전', '4일전', '3일전', '2일전', '어제', '오늘']
-    },
-    yAxis: {
-        type: 'value',
-    },
-    series: [
-        {
-            name: '평균 학습시간',
-            type: 'line',
-            smooth: true,
-            data: [65, 72, 68, 75, 82, 78, 85, 88],
-            itemStyle: { color: '#14BF96' },
-            areaStyle: {
-                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                    {offset: 0, color: 'rgba(20, 191, 150, 0.3)'},
-                    {offset: 1, color: 'rgba(20, 191, 150, 0.1)'}
-                ])
-            }
-        }
-    ]
-};
-studyTimeChart.setOption(studyTimeOption);
-
-// 오류 영향도 버블 차트
-const errorBubbleChart = echarts.init(document.getElementById('error-bubble-chart'));
-const errorBubbleOption = {
-    tooltip: {
-        trigger: 'item',
-        formatter: function(params) {
-            const severityColor = {
-                '심각': '#055D3C',
-                '중간': '#0B9660', 
-                '경미': '#14BF96'
+            const masteryOption = {
+                tooltip: {
+                    trigger: 'item',
+                    formatter: function(params) {
+                        const totalLearners = 120;
+                        const learnerCount = (params.value / 100 * totalLearners).toFixed(1);
+                        return `
+                            <div style="font-size: 14px; line-height: 1.8; padding: 10px;">
+                                <strong style="color: ${params.color};">${params.name}</strong><br/>
+                                마스터리 달성률: <strong>${params.value}%</strong><br/>
+                                예상 학습자 수: <strong>${learnerCount}백만 명</strong>
+                            </div>
+                        `;
+                    }
+                },
+                legend: {
+                    orient: 'vertical',
+                    left: '0%',
+                    top: 'center',
+                    textStyle: { 
+                        fontSize: 11,
+                        color: '#333'
+                    },
+                    itemGap: 8,
+                    itemWidth: 14,
+                    itemHeight: 14,
+                    formatter: function(name) {
+                        return name.length > 20 ? name.substring(0, 20) + '...' : name;
+                    }
+                },
+                series: [
+                    {
+                        name: '카테고리별 숙련도',
+                        type: 'pie',
+                        radius: ['35%', '60%'],
+                        center: ['70%', '50%'],
+                        avoidLabelOverlap: false,
+                        label: {
+                            show: false,
+                            position: 'outside',
+                            formatter: function(params) {
+                                return `${params.value}%`;
+                            },
+                            fontSize: 10,
+                            color: '#333'
+                        },
+                        emphasis: {
+                            label: {
+                                show: true,
+                                fontSize: '12',
+                                fontWeight: 'bold'
+                            },
+                            itemStyle: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        },
+                        labelLine: {
+                            show: true,
+                            length: 8,
+                            length2: 5
+                        },
+                        data: [
+                            {value: 16, name: '수학: 유치원 - 8학년', itemStyle: {color: '#055D3C'}},
+                            {value: 14, name: '수학: 고등학교 및 대학교', itemStyle: {color: '#067A49'}},
+                            {value: 13, name: '과학', itemStyle: {color: '#0B9660'}},
+                            {value: 12, name: '수학: 준비 과정', itemStyle: {color: '#0CA65B'}},
+                            {value: 8, name: '컴퓨팅', itemStyle: {color: '#08A157'}},
+                            {value: 7, name: '읽기 및 언어 예술', itemStyle: {color: '#14BF96'}},
+                            {value: 6, name: '시험 준비', itemStyle: {color: '#10D07A'}},
+                            {value: 5, name: '경제학', itemStyle: {color: '#1AE094'}},
+                            {value: 4, name: '사회 과학', itemStyle: {color: '#24F0AC'}},
+                            {value: 4, name: '협력 과정', itemStyle: {color: '#20E8A0'}},
+                            {value: 3, name: '생활 기술', itemStyle: {color: '#16E086'}}
+                        ]
+                    }
+                ],
             };
-            return `
-                <div style="font-size: 14px; line-height: 1.8; padding: 10px;">
-                    <strong style="color: ${severityColor[params.data[4]]};">${params.data[3]}</strong><br/>
-                    발생 빈도: <strong>${params.data[1]}회/일</strong><br/>
-                    영향 사용자: <strong>${params.data[2].toLocaleString()}명</strong><br/>
-                    심각도: <strong>${params.data[4]}</strong><br/>
-                </div>
-            `;
-        }
-    },
-    legend: {
-        right: '10%',
-        top: '0%',
-        data: ['심각', '중간', '경미']
-    },
-    grid: {
-        left: '10%',
-        top: '15%',
-        right: '0%',
-        bottom: '20%'
-    },
-    xAxis: {
-        type: 'category',
-        data: ['로그인', '동영상재생', '과제제출', '결제', '검색', '프로필', '댓글', '클래스생성'],
-        name: '오류 발생 페이지',
-        nameLocation: 'middle',
-        nameGap: 30,
-        axisLabel: {
-            rotate: 45,
-            fontSize: 10
-        }
-    },
-    yAxis: {
-        type: 'value',
-        name: '발생 빈도 (회/일)',
-        nameLocation: 'middle',
-        nameGap: 50,
-        scale: true
-    },
-    series: [
-        {
-            name: '심각',
-            type: 'scatter',
-            symbolSize: function (data) {
-                return Math.sqrt(data[2]) / 3; // 사용자 수에 비례한 버블 크기
-            },
-            itemStyle: {
-                color: '#055D3C',
-                opacity: 0.8
-            },
-            data: [
-                [0, 45, 1200, '로그인 실패', '심각'], // [x축인덱스, y값, 버블크기, 페이지명, 심각도]
-                [3, 23, 800, '결제 오류', '심각'],
-                [4, 38, 950, '검색 오류', '심각'],
-                [7, 12, 400, '클래스 생성 실패', '심각']
-            ]
-        },
-        {
-            name: '중간',
-            type: 'scatter',
-            symbolSize: function (data) {
-                return Math.sqrt(data[2]) / 3;
-            },
-            itemStyle: {
-                color: '#0B9660',
-                opacity: 0.8
-            },
-            data: [
-                [1, 67, 2100, '동영상 재생 오류', '중간'],
-                [2, 89, 1800, '과제 제출 지연', '중간'],
-                [5, 45, 1100, '프로필 로딩 지연', '중간'],
-                [6, 56, 1350, '댓글 작성 오류', '중간'],
-                [0, 34, 900, '로그인 지연', '중간'],
-                [4, 42, 1050, '검색 결과 지연', '중간']
-            ]
-        },
-        {
-            name: '경미',
-            type: 'scatter',
-            symbolSize: function (data) {
-                return Math.sqrt(data[2]) / 3;
-            },
-            itemStyle: {
-                color: '#14BF96',
-                opacity: 0.8
-            },
-            data: [
-                [1, 123, 2800, '동영상 품질 저하', '경미'],
-                [2, 78, 1600, '과제 UI 깨짐', '경미'],
-                [3, 45, 950, '결제 페이지 스타일', '경미'],
-                [5, 67, 1400, '프로필 이미지 깨짐', '경미'],
-                [6, 89, 1900, '댓글 정렬 오류', '경미'],
-                [7, 34, 750, '클래스 썸네일 오류', '경미']
-            ]
-        }
-    ]
-};
-errorBubbleChart.setOption(errorBubbleOption);
+            masteryChart.setOption(masteryOption);
 
-// 검색 키워드 워드클라우드 (막대그래프로 대체)
-const searchChart = echarts.init(document.getElementById('search-keywords'));
-const searchOption = {
-    tooltip: {
-        trigger: 'axis',
-        axisPointer: {
-            type: 'shadow'
-        },
-        formatter: function(params) {
-            const param = params[0];
-            const totalSearches = [543, 654, 756, 987, 1234].reduce((a, b) => a + b, 0);
-            const percentage = ((param.value / totalSearches) * 100).toFixed(1);
-            return `
-                <div style="font-size: 14px; line-height: 1.8; padding: 10px;">
-                    <strong style="color: ${param.color};">${param.name}</strong><br/>
-                    검색 횟수: <strong>${param.value.toLocaleString()}회</strong><br/>
-                    전체 대비: <strong>${percentage}%</strong><br/>
-                    일평균: <strong>${(param.value / 30).toFixed(0)}회/일</strong><br/>
-                    주간 증가율: <strong>+${(Math.random() * 20 + 5).toFixed(1)}%</strong>
-                </div>
-            `;
-        }
-    },
-    grid: {
-        left: '3%',
-        right: '6%',
-        bottom: '3%',
-        top: '5%',
-        containLabel: true
-    },
-    xAxis: {
-        type: 'value'
-    },
-    yAxis: {
-        type: 'category',
-        data: ['문법', '역사', '물리학', '미적분', 'Python'],  // 순서 뒤집기
-        axisLabel: { fontSize: 10 }
-    },
-    series: [
-        {
-            name: '검색 횟수',
-            type: 'bar',
-            data: [543, 654, 756, 987, 1234],  // 순서 뒤집기
-            itemStyle: {
-                color: '#14BF96'
+            // 과목별 학생수 막대 그래프
+            const subjectChart = echarts.init(document.getElementById('subject-students-chart'));
+            chartInstances.push(subjectChart);
+            
+            const subjectOption = {
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'shadow'
+                    },
+                    formatter: function(params) {
+                        const param = params[0];
+                        return `
+                            <div style="font-size: 14px; line-height: 1.8; padding: 10px;">
+                                <strong style="color: ${param.color};">${param.name}</strong><br/>
+                                등록 학생 수: <strong>${param.value.toLocaleString()}명</strong><br/>
+                                전체 대비 비율: <strong>${((param.value / 29360) * 100).toFixed(1)}%</strong>
+                            </div>
+                        `;
+                    }
+                },
+                grid: {
+                    left: '0%',
+                    right: '5%',
+                    top: '0%',
+                    bottom: '0%',
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'value',
+                    axisLabel: {
+                        fontSize: 12
+                    }
+                },
+                yAxis: {
+                    type: 'category',
+                    data: [
+                        '파트너 과정', '사회', '생활기능', '국어', '컴퓨터과학',
+                        '과학', '경제', '시험준비', '수학: 고등학교 및 대학교',
+                        '수학: 준비 과정', '수학: 유치원-8학년'
+                    ],
+                    axisLabel: { 
+                        fontSize: 11,
+                        interval: 0
+                    }
+                },
+                series: [
+                    {
+                        name: '학생수',
+                        type: 'bar',
+                        data: [850, 1240, 1580, 2150, 2680, 3420, 1890, 2970, 4100, 3650, 4850],
+                        itemStyle: {
+                            color: '#14BF96'
+                        }
+                    }
+                ]
+            };
+            subjectChart.setOption(subjectOption);
+
+            // 사용자 증가 추이
+            const userTrendChart = echarts.init(document.getElementById('user-trend-chart'));
+            chartInstances.push(userTrendChart);
+            
+            const dates = [];
+            const newUsers = [];
+            const activeUsers = [];
+
+            for (let i = 29; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                dates.push(date.toLocaleDateString('ko-KR', {month: 'short', day: 'numeric'}));
+                newUsers.push(Math.floor(Math.random() * 500) + 800);
+                activeUsers.push(Math.floor(Math.random() * 2000) + 15000);
             }
+
+            const userTrendOption = {
+                tooltip: {
+                    trigger: 'axis',
+                    formatter: function(params) {
+                        let result = `<div style="font-size: 14px; line-height: 1.8; padding: 10px;">`;
+                        result += `<strong>${params[0].axisValue}</strong><br/>`;
+                        params.forEach(param => {
+                            result += `<span style="color: ${param.color};">● ${param.seriesName}: <strong>${param.value.toLocaleString()}명</strong></span><br/>`;
+                        });
+                        result += `</div>`;
+                        return result;
+                    }
+                },
+                legend: {
+                    data: ['신규 가입자', '활성 사용자']
+                },
+                grid: {
+                    left: '0%',
+                    right: '1%',
+                    bottom: '0%',
+                    top: '15%',
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: dates
+                },
+                yAxis: {
+                    type: 'value',
+                },
+                series: [
+                    {
+                        name: '신규 가입자',
+                        type: 'line',
+                        data: newUsers,
+                        itemStyle: { color: '#14BF96' }
+                    },
+                    {
+                        name: '활성 사용자',
+                        type: 'line',
+                        data: activeUsers,
+                        itemStyle: { color: '#10D07A' }
+                    }
+                ]
+            };
+            userTrendChart.setOption(userTrendOption);
+
+            // 댓글 활동 시간대별
+            const commentsChart = echarts.init(document.getElementById('comments-chart'));
+            chartInstances.push(commentsChart);
+            
+            const commentsOption = {
+                tooltip: {
+                    trigger: 'axis',
+                    formatter: function(params) {
+                        const param = params[0];
+                        const timeRange = param.name;
+                        const totalComments = [45, 23, 12, 67, 234, 456, 678, 543, 432, 567, 345, 123].reduce((a, b) => a + b, 0);
+                        const percentage = ((param.value / totalComments) * 100).toFixed(1);
+                        return `
+                            <div style="font-size: 14px; line-height: 1.8; padding: 10px;">
+                                <strong style="color: ${param.color};">시간대: ${timeRange}</strong><br/>
+                                댓글 수: <strong>${param.value}개</strong><br/>
+                            </div>
+                        `;
+                    }
+                },
+                grid: {
+                    left: '0%',
+                    right: '0%',
+                    bottom: '0%',
+                    top: '5%',
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'category',
+                    data: ['00-02', '02-04', '04-06', '06-08', '08-10', '10-12', '12-14', '14-16', '16-18', '18-20', '20-22', '22-00']
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                series: [
+                    {
+                        name: '댓글 수',
+                        type: 'bar',
+                        data: [45, 23, 12, 67, 234, 456, 678, 543, 432, 567, 345, 123],
+                        itemStyle: {
+                            color: '#14BF96'
+                        }
+                    }
+                ]
+            };
+            commentsChart.setOption(commentsOption);
+
+            // 기부 현황 파이 차트
+            const donationChart = echarts.init(document.getElementById('donation-chart'));
+            chartInstances.push(donationChart);
+            
+            const donationOption = {
+                tooltip: {
+                    trigger: 'item',
+                    formatter: function(params) {
+                        const totalDonation = 28500 + 12800 + 6532;
+                        const percentage = ((params.value / totalDonation) * 100).toFixed(1);
+                        return `
+                            <div style="font-size: 14px; line-height: 1.8; padding: 10px;">
+                                <strong style="color: ${params.color};">${params.name}</strong><br/>
+                                기부 금액: <strong>${params.value.toLocaleString()}</strong><br/>
+                                전체 비율: <strong>${percentage}%</strong><br/>
+                            </div>
+                        `;
+                    }
+                },
+                legend: {
+                    orient: 'vertical',
+                    left: 'left',
+                    textStyle: { fontSize: 10 }
+                },
+                series: [
+                    {
+                        name: '기부 유형',
+                        type: 'pie',
+                        radius: '60%',
+                        data: [
+                            {value: 28500, name: '개인 기부자', itemStyle: {color: '#0CA65B'}},
+                            {value: 12800, name: '기업 후원', itemStyle: {color: '#14BF96'}},
+                            {value: 6532, name: '정기 기부', itemStyle: {color: '#10D07A'}}
+                        ],
+                        emphasis: {
+                            itemStyle: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        },
+                        label: {
+                            show: false
+                        }
+                    }
+                ]
+            };
+            donationChart.setOption(donationOption);
+
+            // 학습 시간 추이
+            const studyTimeChart = echarts.init(document.getElementById('study-time-chart'));
+            chartInstances.push(studyTimeChart);
+            
+            const studyTimeOption = {
+                tooltip: {
+                    trigger: 'axis',
+                    formatter: function(params) {
+                        const param = params[0];
+                        const hours = Math.floor(param.value / 60);
+                        const minutes = param.value % 60;
+                        const timeString = hours > 0 ? `${hours}시간 ${minutes}분` : `${minutes}분`;
+                        return `
+                            <div style="font-size: 14px; line-height: 1.8; padding: 10px;">
+                                <strong style="color: ${param.color};">${param.name}</strong><br/>
+                                평균 학습시간: <strong>${timeString}</strong><br/>
+                            </div>
+                        `;
+                    }
+                },
+                grid: {
+                    left: '0%',
+                    right: '0%',
+                    bottom: '0%',
+                    top: '5%',
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'category',
+                    data: ['1주전', '6일전', '5일전', '4일전', '3일전', '2일전', '어제', '오늘']
+                },
+                yAxis: {
+                    type: 'value',
+                },
+                series: [
+                    {
+                        name: '평균 학습시간',
+                        type: 'line',
+                        smooth: true,
+                        data: [65, 72, 68, 75, 82, 78, 85, 88],
+                        itemStyle: { color: '#14BF96' },
+                        areaStyle: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                {offset: 0, color: 'rgba(20, 191, 150, 0.3)'},
+                                {offset: 1, color: 'rgba(20, 191, 150, 0.1)'}
+                            ])
+                        }
+                    }
+                ]
+            };
+            studyTimeChart.setOption(studyTimeOption);
+
+            // 오류 영향도 버블 차트
+            const errorBubbleChart = echarts.init(document.getElementById('error-bubble-chart'));
+            chartInstances.push(errorBubbleChart);
+            
+            const errorBubbleOption = {
+                tooltip: {
+                    trigger: 'item',
+                    formatter: function(params) {
+                        const severityColor = {
+                            '심각': '#055D3C',
+                            '중간': '#0B9660', 
+                            '경미': '#14BF96'
+                        };
+                        return `
+                            <div style="font-size: 14px; line-height: 1.8; padding: 10px;">
+                                <strong style="color: ${severityColor[params.data[4]]};">${params.data[3]}</strong><br/>
+                                발생 빈도: <strong>${params.data[1]}회/일</strong><br/>
+                                영향 사용자: <strong>${params.data[2].toLocaleString()}명</strong><br/>
+                                심각도: <strong>${params.data[4]}</strong><br/>
+                            </div>
+                        `;
+                    }
+                },
+                legend: {
+                    right: '10%',
+                    top: '0%',
+                    data: ['심각', '중간', '경미']
+                },
+                grid: {
+                    left: '10%',
+                    top: '15%',
+                    right: '0%',
+                    bottom: '20%'
+                },
+                xAxis: {
+                    type: 'category',
+                    data: ['로그인', '동영상재생', '과제제출', '결제', '검색', '프로필', '댓글', '클래스생성'],
+                    name: '오류 발생 페이지',
+                    nameLocation: 'middle',
+                    nameGap: 30,
+                    axisLabel: {
+                        rotate: 45,
+                        fontSize: 10
+                    }
+                },
+                yAxis: {
+                    type: 'value',
+                    name: '발생 빈도 (회/일)',
+                    nameLocation: 'middle',
+                    nameGap: 50,
+                    scale: true
+                },
+                series: [
+                    {
+                        name: '심각',
+                        type: 'scatter',
+                        symbolSize: function (data) {
+                            return Math.sqrt(data[2]) / 3;
+                        },
+                        itemStyle: {
+                            color: '#055D3C',
+                            opacity: 0.8
+                        },
+                        data: [
+                            [0, 45, 1200, '로그인 실패', '심각'],
+                            [3, 23, 800, '결제 오류', '심각'],
+                            [4, 38, 950, '검색 오류', '심각'],
+                            [7, 12, 400, '클래스 생성 실패', '심각']
+                        ]
+                    },
+                    {
+                        name: '중간',
+                        type: 'scatter',
+                        symbolSize: function (data) {
+                            return Math.sqrt(data[2]) / 3;
+                        },
+                        itemStyle: {
+                            color: '#0B9660',
+                            opacity: 0.8
+                        },
+                        data: [
+                            [1, 67, 2100, '동영상 재생 오류', '중간'],
+                            [2, 89, 1800, '과제 제출 지연', '중간'],
+                            [5, 45, 1100, '프로필 로딩 지연', '중간'],
+                            [6, 56, 1350, '댓글 작성 오류', '중간'],
+                            [0, 34, 900, '로그인 지연', '중간'],
+                            [4, 42, 1050, '검색 결과 지연', '중간']
+                        ]
+                    },
+                    {
+                        name: '경미',
+                        type: 'scatter',
+                        symbolSize: function (data) {
+                            return Math.sqrt(data[2]) / 3;
+                        },
+                        itemStyle: {
+                            color: '#14BF96',
+                            opacity: 0.8
+                        },
+                        data: [
+                            [1, 123, 2800, '동영상 품질 저하', '경미'],
+                            [2, 78, 1600, '과제 UI 깨짐', '경미'],
+                            [3, 45, 950, '결제 페이지 스타일', '경미'],
+                            [5, 67, 1400, '프로필 이미지 깨짐', '경미'],
+                            [6, 89, 1900, '댓글 정렬 오류', '경미'],
+                            [7, 34, 750, '클래스 썸네일 오류', '경미']
+                        ]
+                    }
+                ]
+            };
+            errorBubbleChart.setOption(errorBubbleOption);
         }
-    ]
-};
-searchChart.setOption(searchOption);
+
+        // 차트 리사이즈 함수
+        function resizeCharts() {
+            chartInstances.forEach(chart => {
+                if (chart && !chart.isDisposed()) {
+                    chart.resize();
+                }
+            });
+        }
+
+        // 페이지 로드 시 차트 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            initCharts();
+        });
+
+        // 윈도우 리사이즈 이벤트 리스너
+        window.addEventListener('resize', function() {
+            // 디바운싱을 위한 타이머
+            clearTimeout(window.resizeTimer);
+            window.resizeTimer = setTimeout(function() {
+                resizeCharts();
+            }, 100);
+        });
+
+        // 페이지가 완전히 로드된 후에도 리사이즈 실행
+        window.addEventListener('load', function() {
+            setTimeout(resizeCharts, 100);
+        });
     </script>
 </body>
 </html>
