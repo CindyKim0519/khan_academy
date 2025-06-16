@@ -8,6 +8,9 @@ body {
 .header {
     height: 48px;
 }    
+.logo-img-size {
+    width: 150px;
+}
 .sidebar {
     width: 220px;
     height: calc(100vh - 48px);
@@ -15,6 +18,10 @@ body {
     top: 48px;
     left: 0px;
     z-index: 1;
+}
+.home-icon-size {
+    width: 18px;
+    height: 18px;
 }
 .main-content {
     height: calc(100vh - 48px);
@@ -25,8 +32,6 @@ body {
     width: 100%;
     height: 250px;
 }
-
-
 .font-size-sm {
     font-size: 15px;
 }
@@ -36,10 +41,11 @@ body {
 .font-size-lg {
     font-size: 18px;
 }
-
-.dashboard-icon-size {
-    width: 25px;
-    height: 25px;
+.form-select-sm {
+    width: 83px;
+}
+.form-select-md {
+    width: 130px;
 }
 .bg-khan-green {
     background: #14BF96;
@@ -47,10 +53,17 @@ body {
 .color-khan-green {
     color: #14BF96;
 }
+.list-circle-size {
+    width: 30px;
+    height: 30px;
+}
 .circle-border-gray {
     border: 1px solid #6c757d;
 }
 .dashboard-icon-size {
     width: 20px;
     height: 20px;
+}
+.list-text-width {
+    width: 164px;
 }
